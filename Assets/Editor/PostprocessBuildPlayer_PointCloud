@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+# Dont run on any builds that are not iPhone builds
+if( $ARGV[1] ne "iPhone" )
+{
+	exit;
+}
+
+$installPath = $ARGV[0];
+$currDir = `pwd`;
+chomp $currDir;
+`python2.6 \'$currDir/Assets/Editor/PointCloud/AddAccelerate.py\' \'$installPath\'`;

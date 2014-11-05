@@ -1,0 +1,51 @@
+<h1>PointCloud Plugin Documentation</h1>
+
+<h2>Application Key</h2>
+
+<p>The Application Key window editor is accessed through the PointCloud menu. If you don't have a key for your project, you can access the Application Keys web page by clicking the <strong>Request Key</strong> button in the editor window. Copy your generated App key into the Applicaiton Key field and click the save button. </p>
+
+<h2>Test Scene</h2>
+
+<p>A demo scene is provided under Plugins/PointCloud/TestScene. The demo show how you can use the plugin for both SLAM-based and image based initialization. Once initialized the scene will display a center box surrounded by dominos. You can shoot balls from the camera view and track the action while the dominos fall in sequence.</p>
+
+<h2>Setup</h2>
+
+<p>To set up your own scene, start by adding the PointCloudBehavior script to your camera. You then need to add a script to start SLAM initalization or image recognition. Neither can be started before the PointCloud SDK is created. A minimal implementation to start SLAM initialization as soon as possible would add two scripts to a game object, the first beeing the PointCloudSceneRoot script and the second beeing a script containing the following code:</p>
+
+<pre><code>void OnPointCloudStateChange() {
+    if(PointCloudBehaviour.State == pointcloud_state.IDLE) {
+        PointCloudAdapter.pointcloud_start_slam();
+    }
+}
+</code></pre>
+
+<h2>PointCloudSceneRoot</h2>
+
+<p>Adding the PointCloudSceneRoot script to an object serves two purposes. It will:</p>
+
+<ol>
+<li>Call the OnPointCloudStateChanged() method for every script attached to the same object (if implemented).</li>
+<li>Disable rendering of children objects until initialization is complete.</li>
+</ol>
+
+<h2>PointCloudBehaviour</h2>
+
+<p>The PointCloudBehaviour script has public variables that can be accessed both through the editor and at runtime through PointCloudBehaviour.Instance.X where X is the variable name. The public variables are:</p>
+
+<ul>
+<li><code>drawPoints</code>, controls whether to draw points.</li>
+<li><code>sceneScale</code>, modifies the scene scale.</li>
+<li><code>imageTargets</code>, a list of image targets to load when the PointCloud SDK is initialized.</li>
+</ul>
+
+<h2>Image Targets</h2>
+
+<p>To generate a image target for PointCloud SDK go to the  <a href="http://developer.pointcloud.io/sdk/generatetargets">Generate Image Target page</a>. After downloading the generated image target make sure the file extension is <code>.bytes</code> and then import the file in to your Unity project. Expand the Image Targets variable of the PointCloudBehavior script and set the size to the number of imagets targets you would like to add. Drag the image target files you imported to the empty Image Target slots and finally set physical width or physical height for each image. </p>
+
+<h2>Optimization</h2>
+
+<p>There are multiple optimization settings you should consider to increase performances on iOS. Consult <a href="http://docs.unity3d.com/Documentation/Manual/iphone-iOS-Optimization.html">Unity's iOS Optimization page</a> for details. You can notably disable Accelerometer frequency from the iOS Player Settings if your project doesn't use the accelerometer.</p>
+
+<h2>Building for iOS and plugin compatibility</h2>
+
+<p>The iOS build requires the Apple Accelerate framework to link properly. The PostprocessBuildPlayer should add the framework automatically to the Xcode project. The script is compatible with other plugins that are designed to share the PostprocessBuildPlayer script. As such, installing other plugins, such as ones developed by Prime31, can and should overwrite the PostprocessBuildPlayer script without crippling PointCloud plugin deployment. In case a plugin does break this compatibility, renaming the offending PostprocessBuildPlayer to PostprocessBuildPlayer_{PluginName} and reinstalling the PointCloud plugin should fix the issue.</p>
